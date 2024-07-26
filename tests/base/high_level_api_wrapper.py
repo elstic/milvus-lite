@@ -694,3 +694,18 @@ class HighLevelApiWrapper:
                                        role_name=role_name, object_type=object_type, privilege=privilege,
                                        object_name=object_name, db_name=db_name, **kwargs).run()
         return res, check_result
+
+    @trace()
+    def hybrid_search(self, client,   reqs, rerank, limit,
+                      output_fields=None, timeout=None, round_decimal=-1,
+                      check_task=None, check_items=None, **kwargs):
+        timeout = TIMEOUT if timeout is None else timeout
+
+        func_name = sys._getframe().f_code.co_name
+        res, check = api_request([client.hybrid_search,   reqs, rerank, limit,
+                                  output_fields, timeout, round_decimal], **kwargs)
+        check_result = ResponseChecker(res, func_name, check_task, check_items, check,
+                                       reqs=reqs, rerank=rerank, limit=limit,
+                                       output_fields=output_fields,
+                                       timeout=timeout, **kwargs).run()
+        return res, check_result
